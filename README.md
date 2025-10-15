@@ -9,7 +9,7 @@ This application provides a suite of tools to help you navigate complexity and a
 - **Personalized Learning Paths**: Generate tailored learning paths based on your skill level and goals.
 - **Code Generator**: Get Python code snippets for various AI/ML tasks, with clear explanations.
 - **Project Idea Generator**: Brainstorm project ideas that match your skill level and interests.
-- **Concept Explainer**: Understand complex AI/ML concepts with adaptive explanations and analogies.
+- **Concept Explainer**: Understand complex AI/ML concepts with adaptive explanations.
 
 ## Getting Started
 
