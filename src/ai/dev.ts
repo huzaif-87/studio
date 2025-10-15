@@ -8,3 +8,4 @@ import '@/ai/flows/generate-personalized-learning-path.ts';
 import '@/ai/flows/generate-and-explain-code-snippets.ts';
 import '@/ai/flows/explain-concept-adaptive-complexity.ts';
 import '@/ai/flows/zenith-flow-ai-guide.ts';
+import '@/ai/flows/ml-chatbot-flow.ts';

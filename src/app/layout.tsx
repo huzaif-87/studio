@@ -23,6 +23,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Satoshi:wght@700&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" integrity="sha384-wcIxkf4k558go7rPO2vs95IddGlB3ATqG8A5YpSKeBE4JMYSJpvHWC5DNuOFtlSr" crossOrigin="anonymous" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
       </head>
       <body className="font-body antialiased">
         <div className="fixed inset-0 -z-10 h-full w-full bg-background">
@@ -32,7 +33,7 @@ export default function RootLayout({
         <SidebarProvider>
           <MainSidebar />
           <SidebarInset>
-            <main className="p-4 sm:p-6 lg:p-8">
+            <main className="p-0 sm:p-0 lg:p-0">
               {children}
             </main>
           </SidebarInset>

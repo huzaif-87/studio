@@ -1,171 +1,168 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { zenithFlowAiGuide } from '@/ai/flows/zenith-flow-ai-guide';
-
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
-import { Loader2, User, BotMessageSquare, Send } from 'lucide-react';
-import { MarkdownRenderer } from '@/components/markdown-renderer';
+import { useState, useRef, useEffect, KeyboardEvent } from 'react';
+import { mlChatbotFlow } from '@/ai/flows/ml-chatbot-flow';
 import { useToast } from '@/hooks/use-toast';
-import { ScrollArea } from '@/components/ui/scroll-area';
-
-const formSchema = z.object({
-  message: z.string().min(1, {
-    message: 'Message cannot be empty.',
-  }),
-});
 
 type Message = {
-  role: 'user' | 'assistant';
+  sender: 'user' | 'bot';
   content: string;
 };
 
 export function AiGuideChat() {
-  const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [userInput, setUserInput] = useState('');
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [apiKey, setApiKey] = useState('sk-or-v1-...'); // Pre-configured placeholder
+  const [tempApiKey, setTempApiKey] = useState('');
+  const [apiStatus, setApiStatus] = useState({ message: 'API key pre-configured', success: true });
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      message: '',
-    },
-  });
+  const addMessage = (sender: 'user' | 'bot', content: string) => {
+    setMessages(prev => [...prev, { sender, content }]);
+  };
 
-  async function callApi(message: string) {
-    setLoading(true);
-    setMessages(prev => [...prev, { role: 'user', content: message }]);
+  const handleUserInput = async () => {
+    const message = userInput.trim();
+    if (message) {
+      addMessage('user', message);
+      setUserInput('');
+      setLoading(true);
 
-    try {
-      const response = await zenithFlowAiGuide({ message });
-      setMessages(prev => [
-        ...prev,
-        { role: 'assistant', content: response.response },
-      ]);
-    } catch (error) {
-      console.error(error);
-      toast({
-        variant: 'destructive',
-        title: 'An error occurred',
-        description: 'Failed to get a response. Please try again.',
-      });
-      setMessages(prev =>
-        prev.filter(msg => msg.role !== 'user' || msg.content !== message)
-      );
-    } finally {
-      setLoading(false);
-      form.reset();
+      try {
+        const response = await mlChatbotFlow({ message });
+        addMessage('bot', response.response);
+      } catch (error) {
+        console.error('API Error:', error);
+        toast({
+            variant: 'destructive',
+            title: 'An error occurred',
+            description: 'Sorry, I encountered an error processing your request. Please try again later.',
+        });
+      } finally {
+        setLoading(false);
+      }
     }
-  }
+  };
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    await callApi(values.message);
-  }
+  const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleUserInput();
+    }
+  };
 
-  async function onSummarise() {
-    await callApi('[ACTION:SUMMARISE_CONCEPT]');
+  const askQuestion = (question: string) => {
+    setUserInput(question);
+    // Focus the input to allow the user to send the pre-filled question
+    document.getElementById('user-input')?.focus();
+  };
+  
+  const saveApiKey = () => {
+      if(tempApiKey.trim()){
+        setApiKey(tempApiKey);
+        setApiStatus({ message: 'API key saved successfully!', success: true });
+      } else {
+        setApiStatus({ message: 'Please enter a valid API key.', success: false });
+      }
   }
 
   useEffect(() => {
-    if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTo({
-        top: scrollAreaRef.current.scrollHeight,
-        behavior: 'smooth',
-      });
+    // Scroll to the bottom of the chat on new message
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-  }, [messages]);
-
+  }, [messages, loading]);
+  
   useEffect(() => {
-    // Initial greeting
-    setMessages([
-      {
-        role: 'assistant',
-        content:
-          'Hello! I am the Zenith Flow AI Guide. You can ask me questions about the Zenith Flow concept, or use the \'Summarise\' button for an overview. How can I help?',
-      },
-    ]);
+    // Initial welcome message
+    const welcomeMessage = `
+        <div class="message-content">
+            <span class="definition">Welcome to your Advanced AI Assistant!</span>
+            I'm here to help you with any questions you might have. I can provide detailed explanations, generate content, solve problems, and much more.
+            <br><br>
+            <span class="example">You can ask me about:</span>
+            • Any topic you're curious about<br/>
+            • Help with coding or technical questions<br/>
+            • Explanations of complex concepts<br/>
+            • Creative writing or content generation
+            <br><br>
+            <span class="tip">For the best experience, consider adding your API key in the sidebar.</span>
+        </div>`;
+    addMessage('bot', welcomeMessage);
   }, []);
 
   return (
-    <Card className="h-[70vh] flex flex-col">
-      <CardHeader>
-        <div className="flex items-center gap-3">
-          <BotMessageSquare className="w-6 h-6 text-primary" />
-          <h2 className="font-headline text-xl font-bold">Zenith Flow AI Guide</h2>
+    <div className="chatbot-container">
+        <div className="sidebar">
+            <div className="sidebar-header">
+                <h2><i className="fas fa-robot"></i> Advanced AI</h2>
+                <p>Powered by Advanced AI</p>
+            </div>
+            <div className="topic-suggestions">
+                <h3><i className="fas fa-lightbulb"></i> Popular Topics</h3>
+                <div className="topic-grid">
+                    <button className="btn btn-secondary" onClick={() => askQuestion('Tell me about artificial intelligence')}><i className="fas fa-brain"></i> AI Overview</button>
+                    <button className="btn btn-secondary" onClick={() => askQuestion('Explain machine learning')}><i className="fas fa-cogs"></i> Machine Learning</button>
+                    <button className="btn btn-secondary" onClick={() => askQuestion('What is deep learning?')}><i className="fas fa-network-wired"></i> Deep Learning</button>
+                    <button className="btn btn-secondary" onClick={() => askQuestion('Explain natural language processing')}><i className="fas fa-language"></i> NLP</button>
+                    <button className="btn btn-secondary" onClick={() => askQuestion('How does computer vision work?')}><i className="fas fa-eye"></i> Computer Vision</button>
+                    <button className="btn btn-secondary" onClick={() => askQuestion('Tell me about reinforcement learning')}><i className="fas fa-gamepad"></i> Reinforcement Learning</button>
+                </div>
+            </div>
+            
+            <div className="api-section">
+                <h3><i className="fas fa-key"></i> API Configuration</h3>
+                <div className="api-input">
+                    <input type="password" id="api-key-input" placeholder="Enter your API key" className="api-key-input" onChange={(e) => setTempApiKey(e.target.value)} />
+                    <button id="save-api-key" className="btn btn-small" onClick={saveApiKey}><i className="fas fa-save"></i> Save</button>
+                </div>
+                <p className={`api-status ${apiStatus.success ? 'success' : 'error'}`}>{apiStatus.message}</p>
+            </div>
         </div>
-      </CardHeader>
-      <CardContent className="flex-1 overflow-hidden p-0">
-        <ScrollArea className="h-full p-6" ref={scrollAreaRef}>
-          <div className="space-y-6">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`flex gap-3 ${
-                  message.role === 'user' ? 'justify-end' : ''
-                }`}
-              >
-                {message.role === 'assistant' && (
-                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                    <BotMessageSquare className="w-5 h-5 text-primary" />
+        
+        <div className="main-content">
+            <div className="chat-header">
+                <h1><i className="fas fa-robot"></i> Advanced AI Assistant</h1>
+                <span className="header-subtitle">Ask me anything - powered by state-of-the-art AI</span>
+            </div>
+            
+            <div className="chat-messages" id="chat-messages" ref={chatContainerRef}>
+              {messages.map((msg, index) => (
+                  <div key={index} className={`message ${msg.sender}`}>
+                      <div className="message-avatar">
+                          <i className={`fas ${msg.sender === 'bot' ? 'fa-robot' : 'fa-user'}`}></i>
+                      </div>
+                      <div className="message-content" dangerouslySetInnerHTML={{ __html: msg.content }} />
                   </div>
-                )}
-                <div
-                  className={`rounded-lg p-3 max-w-[80%] ${
-                    message.role === 'user'
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted'
-                  }`}
-                >
-                  <div className="prose dark:prose-invert max-w-none text-sm">
-                    <MarkdownRenderer content={message.content} />
-                  </div>
+              ))}
+              {loading && (
+                <div className="typing-indicator" style={{ display: 'flex' }}>
+                    <div className="typing-dots">
+                        <div className="typing-dot"></div>
+                        <div className="typing-dot"></div>
+                        <div className="typing-dot"></div>
+                    </div>
                 </div>
-                {message.role === 'user' && (
-                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center shrink-0">
-                    <User className="w-5 h-5 text-muted-foreground" />
-                  </div>
-                )}
-              </div>
-            ))}
-             {loading && (
-              <div className="flex gap-3">
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                  <BotMessageSquare className="w-5 h-5 text-primary" />
+              )}
+            </div>
+            
+            <div className="chat-input">
+                <div className="input-group">
+                    <input 
+                      type="text" 
+                      className="chat-input-field" 
+                      id="user-input" 
+                      placeholder="Ask me anything..." 
+                      value={userInput}
+                      onChange={(e) => setUserInput(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      disabled={loading}
+                    />
+                    <button className="btn btn-primary" onClick={handleUserInput} disabled={loading}><i className="fas fa-paper-plane"></i></button>
                 </div>
-                <div className="rounded-lg p-3 bg-muted flex items-center">
-                  <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                </div>
-              </div>
-            )}
-          </div>
-        </ScrollArea>
-      </CardContent>
-      <CardFooter className="p-4 border-t">
-        <div className='w-full space-y-2'>
-        <Button onClick={onSummarise} variant="outline" size="sm" className="mr-2">Summarise Concept</Button>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2 w-full">
-          <Input
-            {...form.register('message')}
-            placeholder="Ask a question about Zenith Flow..."
-            autoComplete="off"
-            disabled={loading}
-          />
-          <Button type="submit" disabled={loading} size="icon">
-            {loading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Send className="h-4 w-4" />
-            )}
-          </Button>
-        </form>
+            </div>
         </div>
-      </CardFooter>
-    </Card>
+    </div>
   );
 }
