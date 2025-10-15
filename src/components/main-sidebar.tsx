@@ -38,7 +38,7 @@ export function MainSidebar() {
             <div className="p-2 rounded-lg bg-primary/20">
               <BotMessageSquare className="w-7 h-7 text-primary" />
             </div>
-            <h1 className="text-xl font-headline font-semibold text-foreground group-data-[state=collapsed]:hidden">AI Mentor Hub</h1>
+            <h1 className="text-xl font-headline font-semibold text-foreground group-data-[state=collapsed]:hidden">Zenith Flow</h1>
         </div>
       </SidebarHeader>
       <SidebarContent>
