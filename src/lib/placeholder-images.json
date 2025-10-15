@@ -1,3 +1,28 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "learning-path",
+      "description": "A winding path through a digital landscape, representing a learning journey.",
+      "imageUrl": "https://picsum.photos/seed/1/600/400",
+      "imageHint": "learning journey"
+    },
+    {
+      "id": "code-generator",
+      "description": "Abstract lines of code on a dark background.",
+      "imageUrl": "https://picsum.photos/seed/2/600/400",
+      "imageHint": "abstract code"
+    },
+    {
+      "id": "project-ideas",
+      "description": "A collection of lightbulbs, symbolizing ideas.",
+      "imageUrl": "https://picsum.photos/seed/3/600/400",
+      "imageHint": "bright ideas"
+    },
+    {
+      "id": "concept-explainer",
+      "description": "An open book with glowing pages.",
+      "imageUrl": "https://picsum.photos/seed/4/600/400",
+      "imageHint": "open book"
+    }
+  ]
 }
