@@ -1,8 +1,8 @@
-# AI Mentor Hub
+# Zenith Flow
 
-Welcome to AI Mentor Hub, your personal AI learning companion built with Next.js and Firebase Genkit. 🤖
+Welcome to Zenith Flow, your intelligent project management tool built with Next.js and Firebase Genkit. 🤖
 
-This application provides a suite of tools to help you learn and grow in the fields of AI, Machine Learning, and Data Science.
+This application provides a suite of tools to help you navigate complexity and achieve clarity in your projects.
 
 ## Features
 
