@@ -26,6 +26,7 @@ const links = [
   { href: '/code-generator', label: 'Code Generator', icon: Code2 },
   { href: '/project-ideas', label: 'Project Ideas', icon: Lightbulb },
   { href: '/concept-explainer', label: 'Concept Explainer', icon: BookOpen },
+  { href: '/ai-guide', label: 'AI Guide', icon: BotMessageSquare },
 ];
 
 export function MainSidebar() {

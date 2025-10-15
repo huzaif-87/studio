@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { BrainCircuit, Code2, Lightbulb, BookOpen } from "lucide-react";
+import { BrainCircuit, Code2, Lightbulb, BookOpen, BotMessageSquare } from "lucide-react";
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
@@ -11,7 +11,6 @@ const features = [
     href: '/learning-path',
     icon: BrainCircuit,
     image: PlaceHolderImages[0],
-    className: 'lg:col-span-1',
   },
   {
     title: 'Code Generator',
@@ -19,7 +18,6 @@ const features = [
     href: '/code-generator',
     icon: Code2,
     image: PlaceHolderImages[1],
-    className: 'lg:col-span-1',
   },
   {
     title: 'Project Idea Generator',
@@ -27,7 +25,6 @@ const features = [
     href: '/project-ideas',
     icon: Lightbulb,
     image: PlaceHolderImages[2],
-    className: 'lg:col-span-1',
   },
   {
     title: 'Concept Explainer',
@@ -35,8 +32,14 @@ const features = [
     href: '/concept-explainer',
     icon: BookOpen,
     image: PlaceHolderImages[3],
-    className: 'lg:col-span-1',
   },
+  {
+    title: 'AI Guide',
+    description: 'Ask questions and get information about the Zenith Flow concept.',
+    href: '/ai-guide',
+    icon: BotMessageSquare,
+    image: PlaceHolderImages[4],
+  }
 ];
 
 export default function Home() {
@@ -51,7 +54,7 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {features.map((feature, index) => (
           <Link href={feature.href} key={index} className="group">
             <Card className="h-full overflow-hidden transition-all duration-300 ease-in-out group-hover:shadow-primary/20 group-hover:shadow-2xl group-hover:-translate-y-2 glassmorphism">

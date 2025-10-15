@@ -23,6 +23,12 @@
       "description": "An open book with glowing pages.",
       "imageUrl": "https://picsum.photos/seed/4/600/400",
       "imageHint": "open book"
+    },
+    {
+      "id": "ai-guide",
+      "description": "A friendly robot assistant.",
+      "imageUrl": "https://picsum.photos/seed/5/600/400",
+      "imageHint": "robot assistant"
     }
   ]
 }
