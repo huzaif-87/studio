@@ -46,9 +46,9 @@ const prompt = ai.definePrompt({
   Respond in the following format:
 
   Code Snippet:
-  \```python
+  \`\`\`python
   # your code here
-  \```
+  \`\`\`
 
   Explanation:
   # explanation of the code here
